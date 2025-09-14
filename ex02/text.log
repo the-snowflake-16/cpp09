@@ -1,0 +1,108 @@
+A: start with [13, 4, 20, 1, 17, 9, 21, 6, 11, 2, 19, 7, 14, 3, 8, 15, 12, 5, 18, 10, 16]
+Pairs after sorting inside each pair: [(4, 13), (1, 20), (9, 17), (6, 21), (2, 11), (7, 19), (3, 14), (8, 15), (5, 12), (10, 18)], leftover 16
+Smalls (firsts of pairs + leftover if any): [4, 1, 9, 6, 2, 7, 3, 8, 5, 10, 16]
+Bigs  (seconds of pairs): [13, 20, 17, 21, 11, 19, 14, 15, 12, 18]
+
+A.bigs: start with [13, 20, 17, 21, 11, 19, 14, 15, 12, 18]
+A.bigs: Pairs after sorting inside each pair: [(13, 20), (17, 21), (11, 19), (14, 15), (12, 18)]
+A.bigs: Smalls (firsts of pairs + leftover if any): [13, 17, 11, 14, 12]
+A.bigs: Bigs  (seconds of pairs): [20, 21, 19, 15, 18]
+
+A.bigs.bigs: start with [20, 21, 19, 15, 18]
+A.bigs.bigs: Pairs after sorting inside each pair: [(20, 21), (15, 19)], leftover 18
+A.bigs.bigs: Smalls (firsts of pairs + leftover if any): [20, 15, 18]
+A.bigs.bigs: Bigs  (seconds of pairs): [21, 19]
+
+A.bigs.bigs.bigs: start with [21, 19]
+A.bigs.bigs.bigs: Pairs after sorting inside each pair: [(19, 21)]
+A.bigs.bigs.bigs: Smalls (firsts of pairs + leftover if any): [19]
+A.bigs.bigs.bigs: Bigs  (seconds of pairs): [21]
+A.bigs.bigs.bigs: base case, return [21]
+
+A.bigs.bigs: Sorted bigs (S) after recursion: [21]
+A.bigs.bigs: Element paired with first smallest 21 is 19; insert it at start of S
+A.bigs.bigs: S after inserting paired small at start: [19, 21]
+A.bigs.bigs: Pending elements to insert (y_list, paired bigs): [(20, 21), (15, 19), (18, None)]
+A.bigs.bigs: Groups (by contiguous indexes) and their contents: [[20, 15, 18]]
+A.bigs.bigs: Insertion order (y values) determined by groups and reversed within groups: [18, 15, 20]
+A.bigs.bigs: Inserting leftover/unpaired 18: binary search in full S before insertion
+  S before insertion: [19, 21]
+  Insert 18 at position 0 (0-based) in S[0:2]
+  S after insertion: [18, 19, 21]
+A.bigs.bigs: Inserting 15: will binary-search in S up to but not including its paired big 19 at index 1
+  S before insertion: [18, 19, 21]
+  Insert 15 at position 0 (0-based) in S[0:1]
+  S after insertion: [15, 18, 19, 21]
+A.bigs.bigs: Inserting 20: will binary-search in S up to but not including its paired big 21 at index 3
+  S before insertion: [15, 18, 19, 21]
+  Insert 20 at position 3 (0-based) in S[0:3]
+  S after insertion: [15, 18, 19, 20, 21]
+A.bigs.bigs: returning S = [15, 18, 19, 20, 21]
+
+A.bigs: Sorted bigs (S) after recursion: [15, 18, 19, 20, 21]
+A.bigs: Element paired with first smallest 15 is 14; insert it at start of S
+A.bigs: S after inserting paired small at start: [14, 15, 18, 19, 20, 21]
+A.bigs: Pending elements to insert (y_list, paired bigs): [(13, 20), (17, 21), (11, 19), (12, 18)]
+A.bigs: Groups (by contiguous indexes) and their contents: [[13, 17], [11, 12]]
+A.bigs: Insertion order (y values) determined by groups and reversed within groups: [17, 13, 12, 11]
+A.bigs: Inserting 17: will binary-search in S up to but not including its paired big 21 at index 5
+  S before insertion: [14, 15, 18, 19, 20, 21]
+  Insert 17 at position 2 (0-based) in S[0:5]
+  S after insertion: [14, 15, 17, 18, 19, 20, 21]
+A.bigs: Inserting 13: will binary-search in S up to but not including its paired big 20 at index 5
+  S before insertion: [14, 15, 17, 18, 19, 20, 21]
+  Insert 13 at position 0 (0-based) in S[0:5]
+  S after insertion: [13, 14, 15, 17, 18, 19, 20, 21]
+A.bigs: Inserting 12: will binary-search in S up to but not including its paired big 18 at index 4
+  S before insertion: [13, 14, 15, 17, 18, 19, 20, 21]
+  Insert 12 at position 0 (0-based) in S[0:4]
+  S after insertion: [12, 13, 14, 15, 17, 18, 19, 20, 21]
+A.bigs: Inserting 11: will binary-search in S up to but not including its paired big 19 at index 6
+  S before insertion: [12, 13, 14, 15, 17, 18, 19, 20, 21]
+  Insert 11 at position 0 (0-based) in S[0:6]
+  S after insertion: [11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+A.bigs: returning S = [11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+
+A: Sorted bigs (S) after recursion: [11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+Element paired with first smallest 11 is 2; insert it at start of S
+S after inserting paired small at start: [2, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+Pending elements to insert (y_list, paired bigs): [(4, 13), (3, 14), (8, 15), (9, 17), (10, 18), (7, 19), (1, 20), (6, 21), (16, None)]
+Groups (by contiguous indexes) and their contents: [[4, 3], [8, 9], [10, 7, 1, 6, 16]]
+Insertion order (y values) determined by groups and reversed within groups: [3, 4, 9, 8, 16, 6, 1, 7, 10]
+Inserting 3: will binary-search in S up to but not including its paired big 14 at index 4
+  S before insertion: [2, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+  Insert 3 at position 1 (0-based) in S[0:4]
+  S after insertion: [2, 3, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+Inserting 4: will binary-search in S up to but not including its paired big 13 at index 4
+  S before insertion: [2, 3, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+  Insert 4 at position 2 (0-based) in S[0:4]
+  S after insertion: [2, 3, 4, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+Inserting 9: will binary-search in S up to but not including its paired big 17 at index 8
+  S before insertion: [2, 3, 4, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+  Insert 9 at position 3 (0-based) in S[0:8]
+  S after insertion: [2, 3, 4, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+Inserting 8: will binary-search in S up to but not including its paired big 15 at index 8
+  S before insertion: [2, 3, 4, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+  Insert 8 at position 3 (0-based) in S[0:8]
+  S after insertion: [2, 3, 4, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+Inserting 16: binary search in full S before insertion (leftover)
+  S before insertion: [2, 3, 4, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21]
+  Insert 16 at position 10 (0-based) in S[0:15]
+  S after insertion: [2, 3, 4, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+Inserting 6: will binary-search in S up to but not including its paired big 21 at index 15
+  S before insertion: [2, 3, 4, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+  Insert 6 at position 3 (0-based) in S[0:15]
+  S after insertion: [2, 3, 4, 6, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+Inserting 1: will binary-search in S up to but not including its paired big 20 at index 16
+  S before insertion: [2, 3, 4, 6, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+  Insert 1 at position 0 (0-based) in S[0:16]
+  S after insertion: [1, 2, 3, 4, 6, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+Inserting 7: will binary-search in S up to but not including its paired big 19 at index 15
+  S before insertion: [1, 2, 3, 4, 6, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+  Insert 7 at position 5 (0-based) in S[0:15]
+  S after insertion: [1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+Inserting 10: will binary-search in S up to but not including its paired big 18 at index 15
+  S before insertion: [1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+  Insert 10 at position 8 (0-based) in S[0:15]
+  S after insertion: [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+A: returning S = [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
