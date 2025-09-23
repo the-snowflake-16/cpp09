@@ -8,6 +8,40 @@ void parse_input(int argc, char *argv[], std::vector<int> &pmerge){
     }
 }
 
+std::vector<int> generate_jacobsthal(int n) {
+    // (void) n;
+    std::vector<int> jacobsthal;
+    jacobsthal.push_back(0);
+    jacobsthal.push_back(1);
+
+    for(int i = 1; i < n; i++) {
+        jacobsthal.push_back(jacobsthal[i] +  2 * jacobsthal[i-1]);
+    }
+    for(unsigned int i = 0; i < jacobsthal.size(); i++) {
+        std::cout << jacobsthal[i] << " ";
+    }
+    std::cout << std::endl;
+
+    return jacobsthal;
+}
+
+std::vector<int> build_final(std::vector<int*> &biggest, std::vector<int*> &lowest) {
+    std::vector<int> sorted;
+
+    if (lowest.empty()) return sorted;
+
+    // Шаг 1: кладём первый элемент lowest в начало
+    sorted.push_back(*lowest[0]);
+
+    // Шаг 2: добавляем отсортированные biggest
+    for (size_t i = 0; i < biggest.size(); i++) {
+        sorted.push_back(*biggest[i]);
+    }
+
+    std::vector<int> jacobsthal = generate_jacobsthal(lowest.size());
+    return sorted;
+}
+
 void sorting_ptrs(std::vector<int*> &pmerge) {
     // std::cout << "pmerge" << std::endl;
     // for (unsigned long i = 0; i < pmerge.size(); i++) {
@@ -75,6 +109,13 @@ void sorting_ptrs(std::vector<int*> &pmerge) {
             std::cout << *lowest[i] << " | ";
         }
     std::cout << std::endl;
+
+    std::vector<int> final = build_final(biggest, lowest);
+    std::cout << "final after final" << std::endl;
+        for (unsigned long i = 0; i < final.size(); i++) {
+            std::cout << final[i] << " | ";
+        }
+    std::cout << std::endl;  
 }
 
 void sorting (std::vector<int> &pmerge){
@@ -108,13 +149,23 @@ void sorting (std::vector<int> &pmerge){
         std::cout << pmerge[i] << " | ";
     }
     std::cout << std::endl;
+    // build_final()
 }
 
-int main(int argc, char *argv[]){
-    if(argc < 2)
-        return 0;
-    PmergeMe pmerge;
-    parse_input(argc, argv, pmerge.pmerge);
-    sorting(pmerge.pmerge);
 
+// int main(int argc, char *argv[]){
+//     if(argc < 2)
+//         return 0;
+//     PmergeMe pmerge;
+//     parse_input(argc, argv, pmerge.pmerge);
+//     sorting(pmerge.pmerge);
+//     std::cout << "lOWEST afterRRRRRRR" << std::endl;
+//         for (unsigned long i = 0; i < pmerge.pmerge.size(); i++) {
+//             std::cout << pmerge.pmerge[i] << " | ";
+//         }
+//     std::cout << std::endl;
+// }
+
+int main() {
+    generate_jacobsthal(18);
 }
