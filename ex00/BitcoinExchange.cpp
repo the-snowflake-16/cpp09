@@ -2,6 +2,17 @@
 
 BitcoinExchange::BitcoinExchange(){}
 
+BitcoinExchange::BitcoinExchange(const BitcoinExchange &other){
+    dataStone = other.dataStone;
+}
+
+BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange &other) {
+    if(this != &other) {
+        dataStone = other.dataStone;
+    }
+    return *this;
+}
+
 BitcoinExchange::~BitcoinExchange(){}
 
 std::string trim(const std::string& s) {
@@ -12,6 +23,7 @@ std::string trim(const std::string& s) {
 }
 
 bool isValidDate(int year, int month, int day) {
+    // std::cout << "h"<< year << std::endl;
     std::tm t = {};
     t.tm_year = year - 1900;
     t.tm_mon  = month - 1;
@@ -38,6 +50,7 @@ bool checkData(std::string dataString){
         date[i++] = token;
     }
     year = std::atoi(date[0].c_str());
+    // std::cout << year << std::endl;
     month = std::atoi(date[1].c_str());
     day = std::atoi(date[2].c_str());
     if(!isValidDate(year, month, day)){
@@ -94,24 +107,28 @@ void BitcoinExchange::ParseInputFile(std::ifstream &nameOfInputFile){
             continue;
         } 
         float afterFloat = std::atof(after.c_str());
-        if(checkData(before)){
-                std::map<std::string, float>::iterator it = this->dataStone.begin();
-                std::string dateStr;
-                while (it->first <= before)
-                {
-                    dateStr = it->first;
-                    it++;
-                }
-                std::cout << before << " => " << after << " = " << afterFloat * it->second << std::endl;
-            } else{
-            std::cout << "Not valide date" << std::endl;
-            }
+
+        std::map<std::string, float>::iterator it = dataStone.upper_bound(before);
+        if (it == dataStone.begin()) {
+            std::cout << "Error: no available rate for date <= " << before << std::endl;
+        } else {
+            --it; 
+            std::cout << before << " => " << after << " = " << afterFloat * it->second << std::endl;
         }
+        if(checkData(before)){
+        std::map<std::string, float>::iterator it = this->dataStone.begin();
+        std::string dateStr;
+        while (it->first <= before)
+        {
+            dateStr = it->first;
+            it++;
+        }
+        std::cout << before << " => " << after << " = " << afterFloat * it->second << std::endl;
+        } else{
+        std::cout << "Not valide date" << std::endl;
+        }
+    }
 }
-
-
-
-
 
 // struct tm {
 //     int tm_sec;   // sec [0, 60]

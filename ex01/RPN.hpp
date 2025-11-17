@@ -16,6 +16,8 @@ public:
     ~RPN();
 
     void startCalculating(std::string str);
+    void parserAndCalculate(std::stack<int> &m_calculation, std::string str);
+
 
     std::stack<int> printVariables()const{
         return m_calculation;

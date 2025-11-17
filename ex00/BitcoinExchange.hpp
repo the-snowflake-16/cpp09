@@ -13,6 +13,8 @@ private:
     std::map<std::string, float> dataStone;
 public:
     BitcoinExchange();
+    BitcoinExchange(const BitcoinExchange &other);
+    BitcoinExchange &operator=(const BitcoinExchange &other);
     ~BitcoinExchange();
 
     std::map<std::string, float> getDataStone()const{

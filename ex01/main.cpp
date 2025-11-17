@@ -2,9 +2,10 @@
 #include <cctype> 
 
 
-int main(){
-    std::string str = "9 8 /" ;
-    std::string s;
+int main(int argc, char *argv[]){
+    if(argc < 1)
+        return 1;
     RPN rpnVariable;
-    rpnVariable.startCalculating(str);
+    rpnVariable.startCalculating(argv[1]);
+    return 0;
 }

@@ -1,171 +1,170 @@
-#include "PmergeMe.hpp"
+#include "PmergeMe.cpp"
 
-void parse_input(int argc, char *argv[], std::vector<int> &pmerge){
-    (void) pmerge;
+std::vector<int> GenerateJacobsthal(int n) {
+    std::vector<int> jacob;
+    if (n <= 0) return jacob;
+    jacob.push_back(0);
+    if (n == 1) return jacob;
+    jacob.push_back(1);
+    // Sequence: t_k = t_{k-1} + 2 * t_{k-2}
+    for (int i = 2; i < n; ++i) {
+        jacob.push_back(jacob[i-1] + 2 * jacob[i-2]);
+    }
+    return jacob;
+}
+
+template <typename Container>
+void BinaryInsert(Container &vec, int value, int *counter) {
+    int left = 0;
+    int right = static_cast<int>(vec.size());
+
+    while (left < right) {
+        int mid = (left + right) / 2;
+        if (value < vec[mid])
+            right = mid;
+        else
+            left = mid + 1;
+    }
+    
+    if (counter)
+        (*counter)++; 
+        
+    typename Container::iterator it = vec.begin();
+    std::advance(it, left);
+    vec.insert(it, value);
+}
+
+template <typename Container>
+void MergeInsertionPhase(Container& biggest,
+                           const Container& lowest,
+                           int* counter)
+{
+    if (lowest.empty()) return;
+
+    BinaryInsert(biggest, lowest[0], counter);
+
+
+    if (lowest.size() == 1) return;
+
+    std::vector<int> J = GenerateJacobsthal(lowest.size() + 2);
+
+    size_t prev = 1;
+
+    for (size_t k = 2; k < J.size(); ++k)
+    {
+        size_t curr = J[k];
+        if (curr >= lowest.size())
+            curr = lowest.size() - 1;
+
+        for (size_t i = curr; i >= prev; --i)
+            BinaryInsert(biggest, lowest[i], counter);
+
+        if (curr == lowest.size() - 1)
+            return;
+
+        prev = curr + 1;
+    }
+}
+
+template <typename Container>
+void GenerateVector(Container &pmerge, int *counter) {
+
+    if(pmerge.size() <= 1)
+        return;
+    
+    std::vector<std::pair<int, int> > pairs;
+    for (size_t i = 0; i + 1 < pmerge.size(); i += 2) {
+        if(pmerge[i] > pmerge[i+1])
+            pairs.push_back(std::make_pair(pmerge[i+1], pmerge[i]));
+        else
+            pairs.push_back(std::make_pair(pmerge[i], pmerge[i + 1]));
+    }
+    
+    Container biggest;
+    Container lowest;
+    
+    for(size_t j = 0 ; j < pairs.size(); j++) {
+        biggest.push_back(pairs[j].second);
+        lowest.push_back(pairs[j].first);
+        (*counter)++;
+    }
+    
+    if(pmerge.size() % 2 != 0) {
+        lowest.push_back(pmerge[pmerge.size() - 1]);
+    }
+    
+    GenerateVector(biggest, counter);
+    
+    MergeInsertionPhase(biggest, lowest, counter);
+    
+    pmerge = biggest;
+}
+
+void ParseInput(int argc, char *argv[], PmergeMe& pmerge){
     for(int i = 1; i < argc; i++){
-        pmerge.push_back(std::atoi(argv[i]));
-        // std::cout << argv[i] << std::endl;
-    }
-}
-
-std::vector<int> generate_jacobsthal(int n) {
-    // (void) n;
-    std::vector<int> jacobsthal;
-    jacobsthal.push_back(0);
-    jacobsthal.push_back(1);
-
-    for(int i = 1; i < n; i++) {
-        jacobsthal.push_back(jacobsthal[i] +  2 * jacobsthal[i-1]);
-    }
-    for(unsigned int i = 0; i < jacobsthal.size(); i++) {
-        std::cout << jacobsthal[i] << " ";
-    }
-    std::cout << std::endl;
-
-    return jacobsthal;
-}
-
-std::vector<int> build_final(std::vector<int*> &biggest, std::vector<int*> &lowest) {
-    std::vector<int> sorted;
-
-    if (lowest.empty()) return sorted;
-
-    // Шаг 1: кладём первый элемент lowest в начало
-    sorted.push_back(*lowest[0]);
-
-    // Шаг 2: добавляем отсортированные biggest
-    for (size_t i = 0; i < biggest.size(); i++) {
-        sorted.push_back(*biggest[i]);
-    }
-
-    std::vector<int> jacobsthal = generate_jacobsthal(lowest.size());
-    return sorted;
-}
-
-void sorting_ptrs(std::vector<int*> &pmerge) {
-    // std::cout << "pmerge" << std::endl;
-    // for (unsigned long i = 0; i < pmerge.size(); i++) {
-    //     std::cout << *pmerge[i] << " | ";
-    // }
-    // std::cout << std::endl;
-    std::vector<int*> biggest;
-    std::vector<int*> lowest;
-    if (pmerge.size() >= 2) {
-
-        // unsigned long paire = (pmerge.size() % 2 == 0) ? pmerge.size() : pmerge.size() - 1;
-
-        // for (unsigned long i = 0; i < paire; i += 2) {
-        //     if (*pmerge[i] > *pmerge[i+1])
-        //         std::swap(*pmerge[i], *pmerge[i+1]);
-        // }
-        for (unsigned long j = 0; j < pmerge.size(); j++){
-            std::cout << *pmerge[j] << " | ";
-        }
-        std::cout  << std::endl;
-        for(unsigned long j = 0; j < pmerge.size(); j+=2){
-            lowest.push_back(pmerge[j]);
-            if(pmerge[j+1])
-                biggest.push_back(pmerge[j+1]);
-        }
-        std::cout << "BIGGEST" << std::endl;
-        for (unsigned long i = 0; i < biggest.size(); i++) {
-            std::cout << *biggest[i] << " | ";
-        }
-        std::cout << std::endl;
-        std::cout << "lOWEST" << std::endl;
-        for (unsigned long i = 0; i < lowest.size(); i++) {
-            std::cout << *lowest[i] << " | ";
-        }
-        std::cout << std::endl;
-        unsigned long paire = (biggest.size() % 2 == 0) ? biggest.size() : biggest.size() - 1;
-        for (unsigned long i = 0; i < paire; i += 2) {
-            if (*biggest[i] > *biggest[i+1]){
-                std::swap(*biggest[i], *biggest[i+1]);
-                std::swap(*lowest[i], *lowest[i+1]);
+        for (char *c = argv[i]; *c; ++c) {
+            if (!std::isdigit(*c)) {
+                std::cerr << "Error: Only positive integers are allowed." << std::endl;
+                exit(1);
             }
         }
-        std::cout << "BIGGEST after" << std::endl;
-        for (unsigned long i = 0; i < biggest.size(); i++) {
-            std::cout << *biggest[i] << " | ";
+        int val = std::atoi(argv[i]);
+        if (val < 0) {
+            std::cerr << "Error: Only positive integers are allowed." << std::endl;
+            exit(1);
         }
-        std::cout << std::endl;
-        std::cout << "lOWEST after" << std::endl;
-        for (unsigned long i = 0; i < lowest.size(); i++) {
-            std::cout << *lowest[i] << " | ";
-        }
-        std::cout << std::endl;
-        sorting_ptrs(biggest);
+        
+        pmerge.pmergeVec.push_back(val);
+        pmerge.pmergeDeq.push_back(val);
     }
-
-        // int i = 0;
-        // biggest.push_back(lowest[i]);
-    std::cout << "BIGGEST afterRRRRRR" << std::endl;
-    for (unsigned long i = 0; i < biggest.size(); i++) {
-        std::cout << *biggest[i] << " | ";
-    }
-    std::cout << std::endl;
-    std::cout << "lOWEST afterRRRRRRR" << std::endl;
-        for (unsigned long i = 0; i < lowest.size(); i++) {
-            std::cout << *lowest[i] << " | ";
-        }
-    std::cout << std::endl;
-
-    std::vector<int> final = build_final(biggest, lowest);
-    std::cout << "final after final" << std::endl;
-        for (unsigned long i = 0; i < final.size(); i++) {
-            std::cout << final[i] << " | ";
-        }
-    std::cout << std::endl;  
 }
 
-void sorting (std::vector<int> &pmerge){
-    std::cout << "vector pmerge:" << std::endl;
-    for (unsigned long i = 0; i < pmerge.size(); i++) {
-        std::cout << pmerge[i] << " | ";
-    }
+template <typename Container>
+void RunAndDisplay(const char* name, Container& data, int& counter) {
+    
+    std::cout << "Before: ";
+    for (size_t i = 0; i < data.size(); ++i)
+        std::cout << data[i] << " ";
+
     std::cout << std::endl;
-        unsigned long paire;
-        if(pmerge.size() % 2 == 0){
-            paire = pmerge.size();
-        } else {
-            paire = pmerge.size() -1;
-        }
-        for (unsigned long i = 0; i < paire; i+=2) {
-            if(pmerge[i] > pmerge[i+1])
-                std::swap(pmerge[i], pmerge[i+1]);
-            // for (unsigned long j = 0; j < pmerge.size(); j++){
-            //     std::cout << pmerge[j] << " | ";
-            // }
-            // std::cout  << std::endl;
-        }
-        std::vector<int*> ptrs;
-        for (size_t i = 0; i < pmerge.size(); i++) {
-            ptrs.push_back(&pmerge[i]);
-        }
-        sorting_ptrs(ptrs);
-    // }
-    std::cout << "vector pmerge after:" << std::endl;
-    for (unsigned long i = 0; i < pmerge.size(); i++) {
-        std::cout << pmerge[i] << " | ";
-    }
+
+    clock_t start = clock();
+    
+    GenerateVector(data, &counter);
+    
+    double duration = static_cast<double>(clock() - start) / CLOCKS_PER_SEC * 1000;
+
+    std::cout << "After (" << name << "): ";
+    for (size_t i = 0; i < data.size(); ++i)
+        std::cout << data[i] << " ";
     std::cout << std::endl;
-    // build_final()
+    
+    std::cout << "Time to process a range of " << data.size() 
+              << " elements with " << name << ": " 
+              << std::fixed << std::setprecision(5) << duration << " ms" << std::endl;
+    // std::cout << "Comparisons (" << name << "): " << counter << std::endl;
 }
 
+int main(int argc, char *argv[]){
+    if (argc < 2) {
+        std::cerr << "Usage: ./PmergeMe <list of positive integers>" << std::endl;
+        return 1;
+    }
+    
+    PmergeMe pmerge;
+    
 
-// int main(int argc, char *argv[]){
-//     if(argc < 2)
-//         return 0;
-//     PmergeMe pmerge;
-//     parse_input(argc, argv, pmerge.pmerge);
-//     sorting(pmerge.pmerge);
-//     std::cout << "lOWEST afterRRRRRRR" << std::endl;
-//         for (unsigned long i = 0; i < pmerge.pmerge.size(); i++) {
-//             std::cout << pmerge.pmerge[i] << " | ";
-//         }
-//     std::cout << std::endl;
-// }
+    ParseInput(argc, argv, pmerge);
 
-int main() {
-    generate_jacobsthal(18);
+
+    int counterVec = 0;
+    int counterDeq = 0;
+
+    std::cout << "\n--- Vector Implementation (std::vector) ---" << std::endl;
+    RunAndDisplay("std::vector", pmerge.pmergeVec, counterVec);
+
+    std::cout << "\n--- Deque Implementation (std::deque) ---" << std::endl;
+    RunAndDisplay("std::deque", pmerge.pmergeDeq, counterDeq);
+    
+    return 0;
 }
